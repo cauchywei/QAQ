@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/test_imageview"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        />
+
+    <Button
+        android:id="@+id/src_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="src"
+        android:layout_alignParentBottom="true"
+        />
+
+    <Button
+        android:id="@+id/grey_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_toRightOf="@id/src_button"
+        android:text="grey"
+        android:layout_alignParentBottom="true"
+        />
+
+    <Button
+        android:id="@+id/convert_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_toRightOf="@id/grey_button"
+        android:text="convert"
+        android:layout_alignParentBottom="true"
+        />
+
+    <Button
+        android:id="@+id/reserve_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_above="@id/src_button"
+        android:text="reserve"
+        />
+
+    <Button
+        android:id="@+id/divide_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_above="@id/src_button"
+        android:layout_toRightOf="@id/reserve_button"
+        android:text="divide"
+        />
+
+
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+        android:id="@+id/contrast_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/reserve_button"
+        android:layout_margin="8dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        app:dsb_min="0"
+        app:dsb_max="100"
+        app:dsb_value="5"
+        />
+
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+        android:id="@+id/brightness_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/contrast_seek_bar"
+        android:layout_margin="8dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        app:dsb_min="-255"
+        app:dsb_max="255"
+        app:dsb_value="0"
+        />
+
+
+</RelativeLayout>
