@@ -42,7 +42,7 @@ public class ImageFilterTestActivity extends Activity implements View.OnClickLis
         mCurrContrast = 50;
 
         //Toast.makeText(this, "aaaa", Toast.LENGTH_SHORT).show();
-        mSrcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.avatar);
+        mSrcBitmap = BadGlobalCode.tmpFace;//BitmapFactory.decodeResource(getResources(), R.drawable.avatar);
         mGreyBitmap = greyScale(mSrcBitmap);
         mConvertBitmap = mGreyBitmap;
         mReserveBitmap = mGreyBitmap;

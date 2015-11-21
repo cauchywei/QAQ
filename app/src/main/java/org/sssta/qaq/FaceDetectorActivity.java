@@ -93,7 +93,12 @@ public class FaceDetectorActivity extends AppCompatActivity {
         mCropButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(FaceDetectorActivity.this,"23333",Toast.LENGTH_SHORT).show();
+                if (mCropImage.getCroppedImage() == null) {
+                    Toast.makeText(FaceDetectorActivity.this, "23333", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    BadGlobalCode.tmpFace = mCropImage.getCroppedImage();
+                }
             }
         });
 
