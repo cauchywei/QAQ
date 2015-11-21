@@ -121,7 +121,7 @@ public class ImageFilterTestActivity extends Activity implements View.OnClickLis
         width = originBitmap.getWidth();
         height = originBitmap.getHeight();
 
-        mGreyBitmap = Bitmap.createBitmap(discolor(originBitmap),width,height, Bitmap.Config.RGB_565);
+        mGreyBitmap = Bitmap.createBitmap(discolor(originBitmap),width,height, Bitmap.Config.ARGB_8888);
         return mGreyBitmap;
     }
 
