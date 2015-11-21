@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/edit_prelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/edit_brightness_seek_bar"
+        android:layout_centerHorizontal="true"
+        >
+
+        <ImageView
+            android:id="@+id/edit_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <!--<com.canaan.test.widget.StickerView-->
+            <!--android:id="@+id/edit_stickerView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--/>-->
+
+
+    </RelativeLayout>
+
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+        android:id="@+id/edit_contrast_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/text_contrast"
+        android:layout_margin="8dp"
+        android:paddingRight="32dp"
+        app:dsb_min="0"
+        app:dsb_max="100"
+        app:dsb_value="5"
+        />
+
+    <TextView
+        android:id="@+id/text_contrast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="对比度"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        />
+
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+        android:id="@+id/edit_brightness_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/edit_contrast_seek_bar"
+        android:layout_toRightOf="@+id/text_brightness"
+        android:layout_margin="8dp"
+        android:layout_alignLeft="@+id/contrast_seek_bar"
+        android:paddingRight="32dp"
+        app:dsb_min="-255"
+        app:dsb_max="255"
+        app:dsb_value="0"
+        />
+
+    <TextView
+        android:id="@+id/text_brightness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="亮度"
+        android:layout_above="@id/edit_contrast_seek_bar"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        />
+
+
+
+</RelativeLayout>

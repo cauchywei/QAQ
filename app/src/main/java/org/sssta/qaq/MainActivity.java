@@ -1,5 +1,6 @@
 package org.sssta.qaq;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,11 +48,38 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout.setTabsFromPagerAdapter(adapter);
         final TabLayout.TabLayoutOnPageChangeListener listener =
                 new TabLayout.TabLayoutOnPageChangeListener(mTabLayout);
+
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         mViewPager.addOnPageChangeListener(listener);
 
         mViewPager.setAdapter(adapter);
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (BasePageFragment mFragment : mFragments) {
+            mFragment.onActivityResult(requestCode,resultCode,data);
+        }
+    }
+
 
     private class PagerAdapter extends FragmentPagerAdapter {
 

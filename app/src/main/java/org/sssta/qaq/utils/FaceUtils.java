@@ -36,7 +36,7 @@ public class FaceUtils {
 
         path.lineTo((float) (faceBitmap.getWidth()*5.0/6), (float) (faceBitmap.getHeight()/1.2));
 
-        path.lineTo((float) (faceBitmap.getWidth() / 1.7), faceBitmap.getHeight());
+        path.lineTo((float) (faceBitmap.getWidth() -deltaWidth), faceBitmap.getHeight());
 
         path.lineTo(deltaWidth, faceBitmap.getHeight());
 

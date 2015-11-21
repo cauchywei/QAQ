@@ -11,6 +11,7 @@ import android.media.FaceDetector;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 
@@ -20,6 +21,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 import org.sssta.qaq.edit.crop.CropImageView;
 import org.sssta.qaq.edit.operate.OperateUtils;
 import org.sssta.qaq.edit.utils.FileUtils;
+import org.sssta.qaq.utils.FaceUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,22 +38,12 @@ import java.io.IOException;
 public class FaceDetectorActivity extends AppCompatActivity {
 
 
-    private static final int PHOTO_FROM_CAMERA = 2333;
-    private static final int PHOTO_FROM_GALLERY = 3332;
-
-    private Button mCameraButton;
-    private Button mGalleryButton;
-    private Button mCropButton;
-    private Button mFilterTestButton;
-
+    private Button mConfirmButton;
     private CropImageView mCropImage;
 
     private LinearLayout mContentLayout;
 
-    private String photoPath = null;
-    private String tempPhotoPath;
-
-    private int screenWidth;
+    private String photoPath;
 
     OperateUtils operateUtils;
     private File mCurrentPhotoFile;
@@ -62,14 +55,12 @@ public class FaceDetectorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_dectector);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         findViews();
 
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
-        screenWidth = metric.widthPixels;
+
+        photoPath = getIntent().getExtras().getString("path");
 
 
         Bitmap hh = BitmapFactory.decodeResource(this.getResources(),
@@ -80,87 +71,60 @@ public class FaceDetectorActivity extends AppCompatActivity {
 
         operateUtils = new OperateUtils(this);
 
-        mCameraButton.setOnClickListener(new View.OnClickListener() {
+
+
+        mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadPhotoFormCamera();
+
+                final Bitmap face = mCropImage.getCroppedImage();
+                final ProgressDialog progressDialog = ProgressDialog.show(FaceDetectorActivity.this, "合成", "正在合成");
+                progressDialog.show();
+
+                new AsyncTask(){
+
+                    @Override
+                    protected Object doInBackground(Object[] params) {
+                        Bitmap greyFace = Filter.discolor(face);
+                        return Filter.disWhite(FaceUtils.cropFaceEdge(Filter.changeBitmapContrastBrightness(greyFace, 1.8f, -30)));
+                    }
+
+
+                    @Override
+                    protected void onPostExecute(Object o) {
+                        BadGlobalCode.tmpFace = ((Bitmap) o);
+                        progressDialog.dismiss();
+                        startActivity(new Intent(FaceDetectorActivity.this, TemplateActivity.class));
+                    }
+                }.execute();
             }
         });
 
-        mGalleryButton.setOnClickListener(new View.OnClickListener() {
+        mCropImage.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public void onClick(View v) {
-                loadPhotoFromGallery();
+            public boolean onPreDraw() {
+                mCropImage.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
             }
         });
 
-        mCropButton.setOnClickListener(new View.OnClickListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                if (mCropImage.getCroppedImage() == null) {
-                    Toast.makeText(FaceDetectorActivity.this, "23333", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    BadGlobalCode.tmpFace = mCropImage.getCroppedImage();
-                }
+            public void run() {
+                detectFace();
             }
-        });
-
-        mFilterTestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FaceDetectorActivity.this,ImageFilterTestActivity.class));
-            }
-        });
-
+        },300);
+        
     }
 
     private void findViews() {
-        mCameraButton = (Button) findViewById(R.id.button_from_camera);
-        mGalleryButton = (Button) findViewById(R.id.button_from_gallery);
-        mCropButton = (Button) findViewById(R.id.button_crop);
-        mFilterTestButton = (Button) findViewById(R.id.button_filter_test);
 
+        mConfirmButton = (Button) findViewById(R.id.button_confirm);
         mContentLayout = (LinearLayout) findViewById(R.id.layout_content);
 
         mCropImage = (CropImageView) findViewById(R.id.cropImageView);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    private void loadPhotoFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, PHOTO_FROM_GALLERY);
-    }
-
-    private void loadPhotoFormCamera() {
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-
-        tempPhotoPath = FileUtils.DCIMCamera_PATH + FileUtils.getNewFileName()
-                + ".jpg";
-
-        mCurrentPhotoFile = new File(tempPhotoPath);
-
-        if (!mCurrentPhotoFile.exists()) {
-            try {
-                mCurrentPhotoFile.createNewFile();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(mCurrentPhotoFile));
-        startActivityForResult(intent, PHOTO_FROM_CAMERA);
-    }
 
     private void detectFace() {
 
@@ -197,7 +161,7 @@ public class FaceDetectorActivity extends AppCompatActivity {
                     tInitY = Math.max(0, tInitY);
 
                     int tEndX = tInitX + faceSize;
-                    int tEndY = (int) (tInitY + faceSize + faceSize / 8);
+                    int tEndY = (int) (tInitY + faceSize + faceSize / 7);
                     tEndX = Math.min(tEndX, resizeBmp.getWidth());
                     tEndY = Math.min(tEndY, resizeBmp.getHeight());
 
@@ -224,14 +188,14 @@ public class FaceDetectorActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Object o) {
 
+                progressDialog.dismiss();
+
                 if (o == null) {
                     Toast.makeText(FaceDetectorActivity.this, "没有检测到人脸，请拖动选框选择脸部区域", Toast.LENGTH_SHORT).show();
                 } else {
                     Rect rect = (Rect) o;
                     mCropImage.setCropFrame(rect.left,rect.top,rect.right,rect.bottom);
                 }
-                progressDialog.dismiss();
-
             }
         }.execute();
 
@@ -259,41 +223,6 @@ public class FaceDetectorActivity extends AppCompatActivity {
         }
 
         return null;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-
-        switch (requestCode) {
-            case PHOTO_FROM_CAMERA:
-
-                photoPath = tempPhotoPath;
-                detectFace();
-
-                break;
-
-            case PHOTO_FROM_GALLERY:
-
-                Uri originalUri = data.getData();
-
-                String[] filePathColumn = {MediaStore.MediaColumns.DATA};
-                Cursor cursor = FaceDetectorActivity.this.getContentResolver().query(
-                        originalUri, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                photoPath = cursor.getString(columnIndex);
-
-                detectFace();
-
-                break;
-            default:
-                break;
-        }
-
     }
 
 }

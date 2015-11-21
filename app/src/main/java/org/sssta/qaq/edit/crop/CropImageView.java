@@ -379,7 +379,7 @@ public class CropImageView extends FrameLayout {
                                                          (int) actualCropHeight);
 
 
-        return FaceUtils.cropFaceEdge(croppedBitmap);
+        return croppedBitmap;
     }
 
     /**

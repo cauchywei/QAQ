@@ -7,4 +7,5 @@ import android.graphics.Bitmap;
  */
 public class BadGlobalCode {
     public static Bitmap tmpFace;
+    public static Bitmap tmpGreyFace;
 }
