@@ -315,9 +315,8 @@ public class CropImageView extends FrameLayout {
     }
 
 
-    public void setCropFrame(float top,float right,float bottom,float left) {
-        mCropOverlayView.setCropFrame(top,right,bottom,left);
-        invalidate();
+    public void setCropFrame(float left,float top,float right,float bottom) {
+        mCropOverlayView.setCropFrame(left,top, right, bottom);
     }
 
    /**

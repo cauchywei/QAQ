@@ -1,12 +1,15 @@
 package org.sssta.qaq;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.media.FaceDetector;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -151,52 +154,79 @@ public class FaceDetectorActivity extends AppCompatActivity {
     }
 
     private void detectFace() {
-        Bitmap resizeBmp = operateUtils.compressionFiller(photoPath,
+
+        final Bitmap resizeBmp = operateUtils.compressionFiller(photoPath,
                 mContentLayout);
-//        mDisplayImageView.setImageBitmap(resizeBmp);
-//        camera_path = saveBitmap(resizeBmp, "saveTemp");
         mCropImage.setImageBitmap(resizeBmp);
 
-        faceDetector = new FaceDetector(resizeBmp.getWidth(), resizeBmp.getHeight(), 1);
-        faces = new FaceDetector.Face[1];
+        final ProgressDialog progressDialog = ProgressDialog.show(this, "识别", "正在识别人脸");
+        progressDialog.show();
 
-        int nFace = faceDetector.findFaces(resizeBmp, faces);
+        new AsyncTask(){
 
-        if (nFace != 0) {
+            @Override
+            protected Object doInBackground(Object[] params) {
 
-            FaceDetector.Face face = faces[0];
-            int faceSize = (int) (face.eyesDistance() * 3);
-            faceSize += face.eyesDistance() * 0.3;
+                faceDetector = new FaceDetector(resizeBmp.getWidth(), resizeBmp.getHeight(), 1);
+                faces = new FaceDetector.Face[1];
 
-            PointF centerFace = new PointF();
-            face.getMidPoint(centerFace);
+                int nFace = faceDetector.findFaces(resizeBmp, faces);
+                Rect faceRect = null;
+                if (nFace != 0) {
 
-            int tInitX = (int) (centerFace.x - faceSize / 2);
-            int tInitY = (int) (centerFace.y - faceSize / 2);
-            tInitX = Math.max(0, tInitX);
-            tInitY = Math.max(0, tInitY);
+                    FaceDetector.Face face = faces[0];
+                    int faceSize = (int) (face.eyesDistance() * 1.8);
+//                    faceSize += face.eyesDistance() * 0.3;
 
-            int tEndX = tInitX + faceSize;
-            int tEndY = tInitY + faceSize;
-            tEndX = Math.min(tEndX, resizeBmp.getWidth());
-            tEndY = Math.min(tEndY, resizeBmp.getHeight());
+                    PointF centerFace = new PointF();
+                    face.getMidPoint(centerFace);
+
+                    int tInitX = (int) (centerFace.x - faceSize / 2);
+                    int tInitY = (int) (centerFace.y - faceSize / 2.3);
+
+                    tInitX = Math.max(0, tInitX);
+                    tInitY = Math.max(0, tInitY);
+
+                    int tEndX = tInitX + faceSize;
+                    int tEndY = (int) (tInitY + faceSize + faceSize / 8);
+                    tEndX = Math.min(tEndX, resizeBmp.getWidth());
+                    tEndY = Math.min(tEndY, resizeBmp.getHeight());
 
 
-            int initX = resizeBmp.getWidth();
-            int initY = resizeBmp.getHeight();
-            int endX = 0;
-            int endY = 0;
+                    int initX = resizeBmp.getWidth();
+                    int initY = resizeBmp.getHeight();
+                    int endX = 0;
+                    int endY = 0;
 
-            initX = Math.min(initX, tInitX);
-            initY = Math.min(initY, tInitY);
-            endX = Math.max(endX, tEndX);
-            endY = Math.max(endY, tEndY);
+                    initX = Math.min(initX, tInitX);
+                    initY = Math.min(initY, tInitY);
+                    endX = Math.max(endX, tEndX);
+                    endY = Math.max(endY, tEndY);
 
-            mCropImage.setCropFrame(initY,endX,endY,initX);
+                    faceRect = new Rect((int)(initX-faceSize*0.1),initY,(int)(endX-faceSize*0.1),endY);
 
-        } else {
-            Toast.makeText(this,"没有检测到人脸，请拖动选框选择脸部区域",Toast.LENGTH_SHORT).show();
-        }
+
+
+                }
+
+                return faceRect;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+
+                if (o == null) {
+                    Toast.makeText(FaceDetectorActivity.this, "没有检测到人脸，请拖动选框选择脸部区域", Toast.LENGTH_SHORT).show();
+                } else {
+                    Rect rect = (Rect) o;
+                    mCropImage.setCropFrame(rect.left,rect.top,rect.right,rect.bottom);
+                }
+                progressDialog.dismiss();
+
+            }
+        }.execute();
+
+
     }
 
     public String saveBitmap(Bitmap bitmap, String name) {

@@ -182,8 +182,9 @@ public class CropOverlayView extends View
 
 		// Draws the main crop window border.
 		canvas.drawRect(Edge.LEFT.getCoordinate(), Edge.TOP.getCoordinate(),
-				Edge.RIGHT.getCoordinate(), Edge.BOTTOM.getCoordinate(),
-				mBorderPaint);
+                Edge.RIGHT.getCoordinate(), Edge.BOTTOM.getCoordinate(),
+                mBorderPaint);
+
 
 		// mBorderPaint.
 
@@ -304,12 +305,12 @@ public class CropOverlayView extends View
 		}
 	}
 
-	public void setCropFrame(float top,float right,float bottom,float left) {
-        Edge.TOP.setCoordinate(top);
-        Edge.RIGHT.setCoordinate(right);
-        Edge.BOTTOM.setCoordinate(bottom);
-        Edge.LEFT.setCoordinate(left);
-        invalidate();
+	public void setCropFrame(float left,float top,float right,float bottom) {
+        Edge.TOP.setCoordinate(top+mBitmapRect.top);
+        Edge.RIGHT.setCoordinate(right+mBitmapRect.left);
+        Edge.BOTTOM.setCoordinate(bottom+mBitmapRect.top);
+        Edge.LEFT.setCoordinate(left+mBitmapRect.left);
+        postInvalidate();
     }
 
 	/**
