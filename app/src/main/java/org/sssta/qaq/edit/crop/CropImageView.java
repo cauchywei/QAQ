@@ -32,7 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import org.sssta.qaq.R;
-import org.sssta.qaq.FaceUtils;
+import org.sssta.qaq.utils.FaceUtils;
 
 /**
  * Custom view that provides cropping capabilities to an image.

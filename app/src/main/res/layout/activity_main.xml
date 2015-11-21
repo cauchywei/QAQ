@@ -1,65 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".FaceDetectorActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#fff"
+    tools:context="org.sssta.qaq.MainActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        tools:context=".FaceDetectorActivity">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/layout_content"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center" >
-
-                <org.sssta.qaq.edit.crop.CropImageView
-                    xmlns:custom="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/cropImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    custom:imageResource="@null" />
-        </LinearLayout>
-
-        <LinearLayout
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center">
-            <Button
-                android:id="@+id/button_from_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="相机"/>
-            <Button
-                android:id="@+id/button_from_gallery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="相册"/>
+            android:elevation="8dp"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-            <Button
-                android:id="@+id/button_crop"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="确认剪切"/>
-            <Button
-                android:id="@+id/button_filter_test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="滤镜测试"/>
-        </LinearLayout>
+                app:tabIndicatorColor="@color/colorAccent"
+                app:tabSelectedTextColor="#fff"
+                app:tabTextColor="#fff"
+                app:tabMode="scrollable"
+                app:tabGravity="center"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_main_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>

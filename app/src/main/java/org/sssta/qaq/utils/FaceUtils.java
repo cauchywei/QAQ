@@ -1,4 +1,4 @@
-package org.sssta.qaq;
+package org.sssta.qaq.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;

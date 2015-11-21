@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "org.sssta.qaq"
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -25,4 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.android.support:design:23.0.0'
     compile 'org.adw.library:discrete-seekbar:1.0.0'
+    compile 'com.android.support:support-v4:23.0.0'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
 }

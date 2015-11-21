@@ -1,4 +1,4 @@
-package org.sssta.qaq;
+package org.sssta.qaq.utils;
 
 /**
  * Created by cauchywei on 15/11/21.
