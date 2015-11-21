@@ -17,13 +17,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.ExifInterface;
@@ -38,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import org.sssta.qaq.R;
+import org.sssta.qaq.FaceUtils;
 
 /**
  * Custom view that provides cropping capabilities to an image.
@@ -383,54 +378,8 @@ public class CropImageView extends FrameLayout {
                                                          (int) actualCropWidth,
                                                          (int) actualCropHeight);
 
-        Bitmap bitmap = Bitmap.createBitmap(croppedBitmap.getWidth(),croppedBitmap.getHeight(),Bitmap.Config.ARGB_8888);
 
-
-        Canvas canvas = new Canvas(bitmap);
-
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-        paint.setAlpha(0);
-        canvas.drawRect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight(), paint);
-
-        paint.setAlpha(255);
-        Path path = new Path();
-        float deltaWidth = croppedBitmap.getWidth()/3;
-        path.moveTo(deltaWidth, 0);
-        path.lineTo(croppedBitmap.getWidth() - deltaWidth, 0);
-        path.lineTo(croppedBitmap.getWidth(),croppedBitmap.getHeight()/9);
-
-        path.lineTo(croppedBitmap.getWidth(), (float) (croppedBitmap.getHeight()/1.7));
-
-        path.lineTo((float) (croppedBitmap.getWidth()*5.0/6), (float) (croppedBitmap.getHeight()/1.2));
-
-        path.lineTo((float) (croppedBitmap.getWidth() / 1.7), croppedBitmap.getHeight());
-
-        path.lineTo(deltaWidth, croppedBitmap.getHeight());
-
-        path.lineTo((float) (croppedBitmap.getWidth()/6), (float) (croppedBitmap.getHeight()/1.2));
-
-        path.lineTo(0, (float) (croppedBitmap.getHeight() / 1.7));
-
-        path.lineTo(0, croppedBitmap.getHeight() / 9);
-        path.close();
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-        canvas.drawPath(path, paint);
-//
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(croppedBitmap, 0, 0, paint);
-
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(croppedBitmap.getWidth() / 10);
-        paint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
-        paint.setARGB(100,255,255,255);
-
-        canvas.drawPath(path,paint);
-
-        return bitmap;
+        return FaceUtils.cropFaceEdge(croppedBitmap);
     }
 
     /**
