@@ -36,7 +36,7 @@ public class Filter {
             int green = Color.green(pixels[i]);
             int blue = Color.blue(pixels[i]);
             int alpha;
-            if (red > 150 && green > 150 && blue > 150) {
+            if (red > 170 && green > 170 && blue > 170) {
                 alpha = 0;
                 pixels[i] = Color.argb(alpha,red,blue,green);
             }

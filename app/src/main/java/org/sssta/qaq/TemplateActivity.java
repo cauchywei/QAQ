@@ -1,10 +1,17 @@
 package org.sssta.qaq;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,7 +19,12 @@ import android.widget.LinearLayout;
 import com.zzt.library.BooheeScrollView;
 import com.zzt.library.BuildLayerLinearLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.Inflater;
 
 /**
  * Created by mac on 15/11/21.
@@ -26,20 +38,35 @@ public class TemplateActivity extends FragmentActivity{
     //private StickerView stickerView;
     private List<Integer> imageViews = TemplateID.templateIDList;
 
-    private static Bitmap aboveBitmap;
+    private static Bitmap aboveBitmap,finalBitmap;
     private int currIndex;
+
+    private View mShareView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_template);
 
+
         preTreatmentBitmap();
         mBooheeScrollView = (BooheeScrollView) findViewById(R.id.scrollGallery_horizontal);
         mBuildLayerLinearLayout = (BuildLayerLinearLayout) findViewById(R.id.scrollGallery_linear);
         preViewImageView = (ImageView) findViewById(R.id.scroll_gallery_iv);
+        mShareView = findViewById(R.id.imageView_share);
         //stickerView = (StickerView)findViewById(R.id.sticker_view);
         //operateView = (OperateView)findViewById(R.id.operateView);
+
+        mShareView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setType("image/*");
+                i.setAction(Intent.ACTION_SEND);
+                i.putExtra(Intent.EXTRA_STREAM, saveImageToGallery(TemplateActivity.this, finalBitmap));
+                startActivity(Intent.createChooser(i, "Share"));
+            }
+        });
 
         initScrollView();
     }
@@ -87,6 +114,7 @@ public class TemplateActivity extends FragmentActivity{
                                     modelBitmap.getWidth()),
                             getStartY(centerViewIndex - 1, scaleAboveBitmap.getHeight(),
                                     modelBitmap.getHeight()));
+                    finalBitmap = newBitmap;
 
                     currIndex = centerViewIndex - 1;
 
@@ -128,7 +156,7 @@ public class TemplateActivity extends FragmentActivity{
         mBuildLayerLinearLayout.addView(emptyStartImageView);
 
         for (int i = 0;i<imageViews.size();i++) {
-            ImageView imageView = getNewImageView(imageViews.get(i));
+            View imageView = getNewImageView(imageViews.get(i));
             mBuildLayerLinearLayout.addView(imageView);
             views[i+1] = imageView;
         }
@@ -163,10 +191,44 @@ public class TemplateActivity extends FragmentActivity{
     }
 
 
-    private ImageView getNewImageView(int id) {
-        ImageView imageView = new ImageView(this);
-        imageView.setLayoutParams(new LinearLayout.LayoutParams(400, 600));
-        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),id));
-        return imageView;
+    private View getNewImageView(int id) {
+        View inflate = LayoutInflater.from(this).inflate(R.layout.face_card, null, false);
+        ((ImageView) inflate.findViewById(R.id.imageView_template)).setImageResource(id);
+        return inflate;
+    }
+
+    public static Uri saveImageToGallery(Context context, Bitmap bmp) {
+        // 首先保存图片
+        File appDir = new File(Environment.getExternalStorageDirectory(), "/QAQ");
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        String fileName = "QAQ_"+System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 其次把文件插入到系统图库
+        Uri photoUri = null;
+        try {
+            String path = MediaStore.Images.Media.insertImage(context.getContentResolver(),
+                    file.getAbsolutePath(), fileName, null);
+            Log.d("aaa", "path --->" + path);
+            photoUri = Uri.parse(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // 最后通知图库更新
+        //Uri photoUri = Uri.parse("file://"+file.getAbsolutePath());
+        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, photoUri));
+        return photoUri;
     }
 }

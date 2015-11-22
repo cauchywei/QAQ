@@ -1,40 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <com.zzt.library.BooheeScrollView
-        android:layout_alignParentBottom="true"
-        android:id="@+id/scrollGallery_horizontal"
-        android:overScrollMode="never"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.zzt.library.BuildLayerLinearLayout
-            android:id="@+id/scrollGallery_linear"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+
+    <RelativeLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.zzt.library.BooheeScrollView
+            android:layout_alignParentBottom="true"
+            android:id="@+id/scrollGallery_horizontal"
+            android:overScrollMode="never"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.zzt.library.BuildLayerLinearLayout>
-    </com.zzt.library.BooheeScrollView>
+            <com.zzt.library.BuildLayerLinearLayout
+                android:id="@+id/scrollGallery_linear"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </com.zzt.library.BuildLayerLinearLayout>
+        </com.zzt.library.BooheeScrollView>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scroll_gallery_iv"
-        android:layout_above="@id/scrollGallery_horizontal"
-        />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/scrollGallery_horizontal"
+            >
 
-    <!--<com.canaan.test.widget.StickerView-->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/scroll_gallery_iv"
+                />
+
+            <ImageView
+                android:id="@+id/imageView_share"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_share"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:padding="8dp"
+                android:layout_margin="8dp"
+
+                />
+
+
+        </RelativeLayout>
+
+
+        <!--<com.canaan.test.widget.StickerView-->
         <!--android:id="@+id/sticker_view"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
         <!--android:layout_above="@id/scrollGallery_horizontal"-->
         <!--/>-->
 
-    <!--<com.canaan.test.widget.OperateView-->
+        <!--<com.canaan.test.widget.OperateView-->
         <!--android:id="@+id/operateView"-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:layout_above="@id/scrollGallery_horizontal"-->
         <!--/>-->
-</RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>
